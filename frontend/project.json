@@ -53,5 +53,16 @@
     "0.53 0.12 42"
   ],
   "caption": "活动量 × 因子 · 单位与范围随报告保存",
-  "unit": "kgCO₂e"
+  "unit": "kgCO₂e",
+  "privacy": {
+    "department_universe": [
+      "材料试验室",
+      "工艺试验室",
+      "光学试验室"
+    ],
+    "clip_upper_bound_kg": 1000.0,
+    "monthly_epsilon": 1.0,
+    "default_epsilon": 0.25,
+    "unit": "kgCO2e"
+  }
 }

@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Depends,HTTPException
 from src.config.database import database
-from src.controllers.auth import current,editor,admin
+from src.controllers.auth import current,editor,admin,unrestricted
 from src.models.source import Source,Policy,Period
 from src.schemas.requests import DataInput
 from src.services.source import save_source,save_policy
@@ -8,9 +8,9 @@ from src.services.audit import log
 from src.utils.serialize import row
 router=APIRouter()
 @router.get('/sources')
-def sources(db=Depends(database),u=Depends(current)): return [row(x) for x in db.query(Source).order_by(Source.id).all()]
+def sources(db=Depends(database),u=Depends(unrestricted)): return [row(x) for x in db.query(Source).order_by(Source.id).all()]
 @router.get('/periods')
-def periods(db=Depends(database),u=Depends(current)):
+def periods(db=Depends(database),u=Depends(unrestricted)):
  names=sorted({x.data['period'] for x in db.query(Source).all()})
  return [{'id':i+1,'name':name,'description':'当前来源期间'} for i,name in enumerate(names)]
 @router.post('/sources')
@@ -23,6 +23,6 @@ def delete(id:int,db=Depends(database),u=Depends(editor)):
  if not obj: raise HTTPException(404,'底稿不存在')
  db.delete(obj);log(db,u.email,'source.delete',id);db.commit();return {'deleted':id}
 @router.get('/policies')
-def policies(db=Depends(database),u=Depends(current)): return [row(x) for x in db.query(Policy).order_by(Policy.id).all()]
+def policies(db=Depends(database),u=Depends(unrestricted)): return [row(x) for x in db.query(Policy).order_by(Policy.id).all()]
 @router.post('/policies')
 def policy(b:DataInput,db=Depends(database),u=Depends(admin)): return row(save_policy(db,u,b.data))

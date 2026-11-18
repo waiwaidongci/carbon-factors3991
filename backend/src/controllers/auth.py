@@ -14,3 +14,7 @@ def editor(user=Depends(current)):
 def admin(user=Depends(current)):
  if user.role!='admin': raise HTTPException(403,'仅负责人可以执行此动作')
  return user
+def unrestricted(user=Depends(current)):
+ """受限阅读者（viewer）仅可访问已发布结果；原始底稿、报告、快照与交付入口一律拒绝。"""
+ if user.role=='viewer': raise HTTPException(403,'受限阅读者仅可查看已公开的隐私发布结果')
+ return user
